@@ -22,25 +22,21 @@ class preparation {
 				buf.put(ch);
 			}
 		string str = buf.str(); 
+		cout << "Please input your searching level" << endl;
+		cout << "1--Total keywords searching" << endl;
+		cout << "2--Switch-case searching" << endl;
+		cout << "3--If_else searching" << endl;
+		cout << "4--IF_elseif_Else searching" << endl;
 	// transform the c file into string form
 	return str;
 	}
-	
-	void output(int stat[], int sw_num, int case_num[]) {
-	cout << "\ntotal num: " << stat[0] << endl;
-	cout << "switch num: " << stat[1] << endl;
-	cout << "case num: ";
-	for(int i = 0; i<sw_num; i++)
-	cout << case_num[i] << " ";
-	cout << "\nif-else num: " << stat[3] << endl;
-	cout << "if-elseif-else num: " << stat[4] << endl;
-	}
+		
 };
 
 class statistics {
 	public:
 		int count, begin ; 
-	int count_kw(string file, string key_words[]) {
+	void count_kw(string file, string key_words[]) {
 		count = 0;  // all kinds of numbers will be initially sttled as 0
 		begin = -1;
 		for (int i = 0; i < 32; i++) {
@@ -49,48 +45,35 @@ class statistics {
 				begin = begin + key_words[i].length();
 			}	
 		}
-		return count;
+		cout << "total num: " << count << endl;
 	}
 	
-	int count_sw(string file) {
+	void count_sw_ca(string file) {
 		count = 0;
 		begin = -1;
+		int case_num[99] = {0, };
 		while((begin=file.find("switch", begin+1)) != string::npos) {
 				count ++;
 				begin = begin + 5;
-			}
-		return count;
+		}
+		
+		cout << "switch num: " << count << endl;
+		cout << "case num: ";
+			for(int i = 0; i<count; i++)
+		cout << case_num[i] << " ";
+		cout << endl;
 	} 
 	
-	int* count_ca(int sw_num, string file) {
-		int *case_count;
-		int wh = 0;
-		case_count = new int [sw_num];
-		case_count[0] = 0;
-		case_count[1] = 0;
-		begin = -1;
-		for(int i = 0; i < sw_num; i++) {
-			wh = 0;
-			while((begin=file.find("case", begin+1)) != string::npos) {   
-			cout << 1 <<  " " << begin << endl;  
-				case_count[i] ++; 
-				begin = begin + 4;                                  
-				if(file.find("switch", begin+1)) {
-					wh ++;
-					if(wh!=1)
-					break;
-				}
-				//cout << begin << "  " << count << endl;
-				}
-		}
-		return case_count;
-	} 
-	//private:
+	void count_ifelse(string str) {
+		cout << "if-else num: " << count << endl;
+	}
+	
+	void count_ifelse_ifelse(string str) {
+		cout << "if-elseif-else num: " << count<< endl;
+	}
 };
 
-int main()
-{	
-	int stat [5] = {0,};
+int main() {	
 	statistics test;
 	preparation pre;
     string str = pre.acquire_file();
@@ -100,12 +83,10 @@ int main()
 	 "register", "return", "short", "signed", "sizeof", "static", "struct", "switch", "typedef", 
 	 "union", "unsigned", "void", "volatile", "while"};
 	
-	stat[0] = test.count_kw(str, key_words);
-	stat[1] = test.count_sw(str);
-	int sw_num = stat[1];
-	int *case_num;
-	case_num = test.count_ca(sw_num, str);
-	pre.output(stat, sw_num, case_num);
+	test.count_kw(str, key_words);
+	test.count_sw_ca(str);
+	test.count_ifelse(str);
+	test.count_ifelse_ifelse(str);
 	return 0;
 }
 
