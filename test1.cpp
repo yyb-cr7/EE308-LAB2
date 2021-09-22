@@ -25,6 +25,16 @@ class preparation {
 	// transform the c file into string form
 	return str;
 	}
+	
+	void output(int stat[], int sw_num, int case_num[]) {
+	cout << "\ntotal num: " << stat[0] << endl;
+	cout << "switch num: " << stat[1] << endl;
+	cout << "case num: ";
+	for(int i = 0; i<sw_num; i++)
+	cout << case_num[i] << " ";
+	cout << "\nif-else num: " << stat[3] << endl;
+	cout << "if-elseif-else num: " << stat[4] << endl;
+	}
 };
 
 class statistics {
@@ -54,33 +64,37 @@ class statistics {
 	
 	int* count_ca(int sw_num, string file) {
 		int *case_count;
+		int wh = 0;
 		case_count = new int [sw_num];
 		case_count[0] = 0;
 		case_count[1] = 0;
 		begin = -1;
 		for(int i = 0; i < sw_num; i++) {
-			while((begin=file.find("case", begin+1)) != string::npos) {
-				if(file.find("switch"))
+			wh = 0;
+			while((begin=file.find("case", begin+1)) != string::npos) {   
+			cout << 1 <<  " " << begin << endl;  
+				case_count[i] ++; 
+				begin = begin + 4;                                  
+				if(file.find("switch", begin+1)) {
+					wh ++;
+					if(wh!=1)
 					break;
-				case_count[i] ++;
+				}
 				//cout << begin << "  " << count << endl;
-				begin = begin + 4;
 				}
 		}
 		return case_count;
 	} 
 	//private:
-		
 };
 
 int main()
-{
+{	
+	int stat [5] = {0,};
 	statistics test;
 	preparation pre;
     string str = pre.acquire_file();
     // "E://test1_sf.c"
-    
-	int stat [5] = {0,};
 	string key_words[] = {"auto", "break", "case", "char", "const", "continue", "default", "do ", 
 	"double", "else", "enum", "extern", "extern", "float", "for", "goto", "if", "int", "long",
 	 "register", "return", "short", "signed", "sizeof", "static", "struct", "switch", "typedef", 
@@ -91,15 +105,9 @@ int main()
 	int sw_num = stat[1];
 	int *case_num;
 	case_num = test.count_ca(sw_num, str);
-
-	cout << "\ntotal num: " << stat[0] << endl;
-	cout << "switch num: " << stat[1] << endl;
-	cout << "case num: ";
-	for(int i = 0; i<sw_num; i++)
-	cout << case_num[i] << " ";
-	cout << "\nif-else num: " << stat[3] << endl;
-	cout << "if-elseif-else num: " << stat[4] << endl;
+	pre.output(stat, sw_num, case_num);
 	return 0;
 }
 
+// "E://test1_sf.c"
 
