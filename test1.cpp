@@ -3,27 +3,30 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <stack>
 
 using namespace std;
 
 class preparation {
 	public:
 	
-	string Delete(string s)
-	{
+	string Delete_useless(string s) {
     	string new_str = "";
-    	for(int i=0; i<s.size(); i++){
+		int pre; 
+    	for(int i=0; i<s.size(); i++){ // the size of the string must change randomly
         	if(s[i] == '"'){
-            	for(int j=i+1; i<s.size(); j++){
-                	if(s[j] == '"'){
-                    	s.erase(i,j-i+1);
+            	for(int k=i+1; i<s.size(); k++){
+                	if(s[k] == '"'){
+                		pre = k-i+1;
+                    	s.erase(i,pre);
                     	break;
                 	}
             	}
         	}
     	}    
     	for(int i=0; i<s.size(); i++){
-        	if(s[i]=='/' && s[i+1]=='/'){
+    		pre = i+1;
+        	if(s[i]=='/' && s[pre]=='/'){
             	return new_str;
         	}	
         	new_str += s[i];
@@ -47,60 +50,83 @@ class statistics {
 		cout << "total num: " << count << endl;
 	}
 	
-	void count_sw_ca(string file) {
-		int j, begin = -1;
-		int next, count = 0;
+	void count_sw_ca(string file, int level) {
+		int j = -1;
+		int begin = -1;
+		int next = 0;
+		int count = 0;
+		int pre = 0;
 		int case_num[99] = {0, };
-		while((begin=file.find("switch", begin+1)) != string::npos) {			    
-				j, count ++;
+		while((begin=file.find("switch", begin+1)) != string::npos) {		    
+				j ++;
+				count ++;
 				begin = begin + 5;
-				next = file.find("switch", begin+1);
-				cout << 1<< endl;
+				pre = begin;
+				if((begin=file.find("switch", begin+1)) != string::npos) {
+					next = begin;
+					begin = pre;
 				while((begin=file.find("case", begin+1)) < next) {
 					case_num[j] ++;
 					begin = begin + 4;
+					}
+				}else {
+					begin = pre;
+				while((begin=file.find("case", begin+1)) != string::npos) {
+					case_num[j] ++;
+					begin = begin + 4;
 				}
+			}
+			begin = pre;		
 		}
 		
-		cout << "switch num: " << count << endl;
-		cout << "case num: ";
-			for(int i = 0; i<count; i++)
-				cout << case_num[i] << " ";
+		if(level <= 2) {
+			cout << "switch num: " << count << endl;
+		}else{
+			cout << "switch num: " << count << endl;
+			cout << "case num: ";
+			for(int l=0; l<=j; l++) {
+				cout << case_num[l] << " ";
+		}
 		cout << endl;
+		}
 	} 
 	
-	void count_ifelse(string str) {
-		int count = 0;
-		
-		cout << "if-else num: " << count << endl;
+	void count_ifelse_ifelse(string file, int level) {
+		int count1, count2 = 0;
+		int begin = -1;
+		stack<int> s;
+		for(int i=0; i++; i<file.length()) {
+			while((begin=file.find("if", begin+1)) != string::npos) {
+					count1 ++;
+					begin = begin + 2;
+					s.push(1);
+			}
+		}	
+		if(level <= 3) {
+			cout << "if-else num: " << count1 << endl;
+		}else{
+			cout << "if-else num: " << count1 << endl;
+			cout << "if-elseif-else num: " << count2 << endl;
+		}
 	}
-	
-	void count_ifelse_ifelse(string str) {
-		int count = 0;
-		cout << "if-elseif-else num: " << count<< endl;
-	}
+		// "E://test1_sf.c"	
 };
 
 int main() {
 	int level;	
 	statistics test;
 	preparation pre;
-	char* c;
 	string str;
-	string path;
+	string path = "";
+	string all;
 	cout << "Please input your path of the file" << endl;
 	cin >> path;
 	ifstream fp(path.c_str());
-	if (fp == NULL)
-	{
-		cout << "File not found" << endl;
-		return 0;
-	}
 	while(getline(fp, str)){
-		str = pre.Delete(str);
-		cout << str << endl;
+		str = pre.Delete_useless(str);
+		all += str;
 	}	
-	str = str.c_str();
+	cout << all << endl;
     // "E://test1_sf.c"
 	string key_words[] = {"auto", "break", "case", "char", "const", "continue", "default", "do ", 
 	"double", "else", "enum", "extern", "extern", "float", "for", "goto", "if", "int", "long",
@@ -109,24 +135,27 @@ int main() {
 
 	cout << "Please input your searching level" << endl;
 	cout << "1--Total keywords searching" << endl;
-	cout << "2--Switch-case searching" << endl;
-	cout << "3--If_else searching" << endl;
-	cout << "4--IF_elseif_Else searching" << endl;
+	cout << "2--Switch searching" << endl;
+	cout << "3--Case searching" << endl;
+	cout << "4--If_else searching" << endl;
+	cout << "5--IF_elseif_Else searching" << endl; 	
 	cin >> level;
 	switch (level)  {
-		case 1: test.count_kw(str, key_words);
+		case 1: test.count_kw(all, key_words);
 			break;
-		case 2: test.count_kw(str, key_words);
-			test.count_sw_ca(str);
+		case 2: test.count_kw(all, key_words);
+			test.count_sw_ca(all, level);
 			break;
-		case 3: test.count_kw(str, key_words);
-			test.count_sw_ca(str);
-			test.count_ifelse(str);
+		case 3: test.count_kw(all, key_words);
+			test.count_sw_ca(all, level);	
 			break;
-		case 4:	test.count_kw(str, key_words);
-			test.count_sw_ca(str);
-			test.count_ifelse(str);	
-			test.count_ifelse_ifelse(str);
+		case 4:	test.count_kw(all, key_words);
+			test.count_sw_ca(all, level);
+			test.count_ifelse_ifelse(all, level);
+			break;
+		case 5:	test.count_kw(all, key_words);
+			test.count_sw_ca(all, level);
+			test.count_ifelse_ifelse(all, level);
 			break;
 		default: 
 			cout << "Your input is invalid, please restart the program" << endl;
@@ -134,4 +163,8 @@ int main() {
 	return 0;
 }
 
+//string s = "int main(){  int i=1;  // yybzjbsdouble j=0;   //long ";
+//	s = pre.Delete_useless(s);
+//	cout << s << endl;;
+//	test.count_kw(s, key_words);
 
