@@ -154,7 +154,7 @@ int main() {
 		str = pre.Delete_useless(str);
 		all += str;
 	}	
-	cout << all << endl;
+	// cout << all << endl;
     // "E://test1_sf.c"
 	string key_words[] = {"auto", "break", "case", "char", "const", "continue", "default", "do ", 
 	"double", "else", "enum", "extern", "extern", "float", "for", "goto", "if", "int", "long",
