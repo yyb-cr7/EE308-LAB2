@@ -81,7 +81,7 @@ class statistics {
 		
 		if(level <= 2) {
 			cout << "switch num: " << count << endl;
-		}else{
+		}else {
 			cout << "switch num: " << count << endl;
 			cout << "case num: ";
 			for(int l=0; l<=j; l++) {
@@ -92,24 +92,52 @@ class statistics {
 	} 
 	
 	void count_ifelse_ifelse(string file, int level) {
-		int count1, count2 = 0;
+		int count1 = 0;
+		int count2 = 0;
 		int begin = -1;
 		stack<int> s;
-		for(int i=0; i++; i<file.length()) {
-			while((begin=file.find("if", begin+1)) != string::npos) {
-					count1 ++;
-					begin = begin + 2;
-					s.push(1);
-			}
-		}	
-		if(level <= 3) {
+		for (int i = 0; i<file.size()-5; i++) {
+        	if (file[i] == 'i' && file[i+1] == 'f' && (before_no_zero(file, i) != 'e')) {    
+            s.push(1);
+        	}else if (file[i] == 'e' && file[i+1] == 'l' && file[i+2] == 's' && file[i+3] == 'e' && (next_no_zero(file, i+4) != 'i')) {
+            if (s.top() == 1) {
+                count1++;     
+            } else {
+                count2++;     
+            }
+            s.pop();     
+        }else  if (file[i] == 'e' && file[i+1] == 'l' && file[i+2] == 's' && file[i+3] == 'e' && (next_no_zero(file, i+4) == 'i')) {
+            s.push(2);
+        }
+    }	
+		if(level <= 4) {
 			cout << "if-else num: " << count1 << endl;
-		}else{
+		}else {
 			cout << "if-else num: " << count1 << endl;
 			cout << "if-elseif-else num: " << count2 << endl;
 		}
 	}
 		// "E://test1_sf.c"	
+		
+	char next_no_zero(string file, int loc) {
+		char ans = 'a';
+		for (int i = loc; i<file.length(); i++) {
+			if(file[i] != ' ') {
+				return file[i];
+			}
+		}
+		return ans;
+	}
+	
+	char before_no_zero(string file, int loc) {
+		char ans = 'a';
+		for (int i = loc-1; i>0; i--) {
+			if(file[i] != ' ') {
+				return file[i];
+			}
+		}
+		return ans;
+	}
 };
 
 int main() {
